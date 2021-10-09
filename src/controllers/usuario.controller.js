@@ -1,120 +1,122 @@
 const User = require('../models/usuario.model');
 
-// Retrieve and return all users from the database.
+// Recebe e retorna todos os usuários da base de dados
 exports.findAll = (req, res) => {
     User.find()
-        .then(users => {
-            res.send(users);
+        .then(usuarios => {
+            res.send(usuarios);
         }).catch(err => {
             res.status(500).send({
-                message: err.message || "Something went wrong while getting list of users."
+                message: err.message || "Algo deu errado durante a busca pelos usuários..."
             });
         });
 };
 
-// Create and Save a new User
+// Cria e salva um usuário novo, recebendo do corpo da requisição enviada pelo usuário as informações
 exports.create = (req, res) => {
     // Validate request
     if (!req.body) {
         return res.status(400).send({
-            message: "Please fill all required field"
+            message: "Por favor, preencha todos os campos necessários!"
         });
     }
 
-    // Create a new User
+    // Instancia um novo usuário e preenche as informações vindas do corpo da requisição 
     const user = new User({
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.last_name,
-        phone: req.body.last_name
+        primeiroNome: req.body.primeiroNome,
+        ultimoNome: req.body.ultimoNome,
+        email: req.body.email,
+        senha: req.body.senha
     });
 
-    // Save user in the database
+    // Chama o .save() para gravar o usuário instanciado na base de dados
     user.save()
         .then(data => {
             res.send(data);
         }).catch(err => {
             res.status(500).send({
-                message: err.message || "Something went wrong while creating new user."
+                message: err.message || "Algo deu errado na criação de um novo usuário..."
             });
         });
 };
 
-// Find a single User with a id
+// Busca por um usuário específico, utilizando como parâmetro o id recebido do corpo da requisição
 exports.findOne = (req, res) => {
     User.findById(req.params.id)
-        .then(user => {
-            if (!user) {
+        .then(usuario => {
+            if (!usuario) {
                 return res.status(404).send({
-                    message: "User not found with id " + req.params.id
+                    message: "Usuário não encontrado para o id: " + req.params.id
                 });
             }
-            res.send(user);
+            res.send(usuario);
         }).catch(err => {
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({
-                    message: "User not found with id " + req.params.id
+                    message: "Usuário não encontrado para o id: " + req.params.id
                 });
             }
             return res.status(500).send({
-                message: "Error getting user with id " + req.params.id
+                message: "Erro na busca pelo id: " + req.params.id
             });
         });
 };
 
-// Update a User identified by the id in the request
+// Atualiza um usuário através do id enviado no corpo da requisição
 exports.update = (req, res) => {
     // Validate Request
     if (!req.body) {
         return res.status(400).send({
-            message: "Please fill all required field"
+            message: "Por favor, preencha todos os campos necessários!"
         });
     }
 
-    // Find user and update it with the request body
+    // Método que busca e atualiza o usuário pelo id da requisição
     User.findByIdAndUpdate(req.params.id, {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.last_name,
-        phone: req.body.last_name
+        primeiroNome: req.body.primeiroNome,
+        ultimoNome: req.body.ultimoNome,
+        email: req.body.email,
+        phone: req.body.phone
     }, { new: true })
         .then(user => {
             if (!user) {
                 return res.status(404).send({
-                    message: "user not found with id " + req.params.id
+                    message: "Usuário não encontrado para o id: " + req.params.id
                 });
             }
             res.send(user);
         }).catch(err => {
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({
-                    message: "user not found with id " + req.params.id
+                    message: "Usuário não encontrado para o id: " + req.params.id
                 });
             }
             return res.status(500).send({
-                message: "Error updating user with id " + req.params.id
+                message: "Erro ao atualizar usuário para o id: " + req.params.id
             });
         });
 };
 
-// Delete a User with the specified id in the request
+// Encontra e deleta o usuário pelo id dos parâmetros da requisição
+
+
 exports.delete = (req, res) => {
     User.findByIdAndRemove(req.params.id)
         .then(user => {
             if (!user) {
                 return res.status(404).send({
-                    message: "user not found with id " + req.params.id
+                    message: "Usuário não encontrado para o id: " + req.params.id
                 });
             }
-            res.send({ message: "user deleted successfully!" });
+            res.send({ message: "Usuário deletado com sucesso!" });
         }).catch(err => {
             if (err.kind === 'ObjectId' || err.name === 'NotFound') {
                 return res.status(404).send({
-                    message: "user not found with id " + req.params.id
+                    message: "Usuário não encontrado para o id: " + req.params.id
                 });
             }
             return res.status(500).send({
-                message: "Could not delete user with id " + req.params.id
+                message: "Não foi possível deletar o usuário com o id: " + req.params.id
             });
         });
 };

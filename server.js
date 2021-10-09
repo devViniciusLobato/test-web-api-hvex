@@ -25,15 +25,15 @@ mongoose.Promise = global.Promise
 mongoose.connect(dbConfig.url, {
     useNewUrlParser: true
 }).then(() => {
-    console.log("Successfully connected to the database")
+    console.log("Conexão com banco bem sucedida!")
 }).catch(err => {
-    console.log('Could not connect to the database.', err)
+    console.log('Não foi possível conectar ao banco de dados', err)
     process.exit()
 })
 
 // Define a rota padrão / root
 app.get('/', (req, res) => {
-    res.json({ "message": "Hello World" })
+    res.json({ "message": "Porta padrão para requisições" })
 })
 
 // Usando como middleware
